@@ -1,0 +1,44 @@
+{
+  "name": "@aptabase/react-native",
+  "version": "0.2.1",
+  "private": false,
+  "description": "React Native SDK for Aptabase: Open Source, Privacy-First and Simple Analytics for Mobile, Desktop and Web Apps",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aptabase/aptabase-reactnative.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aptabase/aptabase-reactnative/issues"
+  },
+  "homepage": "https://github.com/aptabase/aptabase-reactnative",
+  "license": "MIT",
+  "scripts": {
+    "build": "vite build"
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "dist",
+    "package.json"
+  ],
+  "devDependencies": {
+    "@rollup/plugin-replace": "5.0.2",
+    "vite": "4.3.8",
+    "vite-plugin-dts": "2.3.0"
+  },
+  "peerDependencies": {
+    "react": ">= 18",
+    "react-native": ">= 0.60"
+  }
+}
