@@ -13,6 +13,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
+    "types": ["react-native"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
