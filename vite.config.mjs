@@ -10,13 +10,12 @@ export default defineConfig({
       formats: ["cjs", "es"],
       entry: {
         index: path.resolve(__dirname, "src/index.ts"),
-        main: path.resolve(__dirname, "src/main.ts"),
       },
-      name: "@aptabase/electron",
+      name: "@aptabase/react-native",
       fileName: (format, entryName) => `${entryName}.${format}.js`,
     },
     rollupOptions: {
-      external: ["electron", "os", "fs/promises", "child_process", "crypto"],
+      external: ["react", "react-native"],
     },
   },
   plugins: [
