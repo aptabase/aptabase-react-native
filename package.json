@@ -4,6 +4,7 @@
   "private": false,
   "description": "React Native SDK for Aptabase: Open Source, Privacy-First and Simple Analytics for Mobile, Desktop and Web Apps",
   "sideEffects": false,
+  "author": "goenning <goenning@aptabase.com>",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
@@ -32,7 +33,8 @@
     "dist",
     "package.json",
     "android",
-    "ios"
+    "ios",
+    "aptabase-react-native.podspec"
   ],
   "devDependencies": {
     "@rollup/plugin-replace": "5.0.2",
