@@ -1,6 +1,6 @@
 {
   "name": "@aptabase/react-native",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "description": "React Native SDK for Aptabase: Open Source, Privacy-First and Simple Analytics for Mobile, Desktop and Web Apps",
   "sideEffects": false,
@@ -17,12 +17,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aptabase/aptabase-reactnative.git"
+    "url": "git+https://github.com/aptabase/aptabase-react-native.git"
   },
   "bugs": {
-    "url": "https://github.com/aptabase/aptabase-reactnative/issues"
+    "url": "https://github.com/aptabase/aptabase-react-native/issues"
   },
-  "homepage": "https://github.com/aptabase/aptabase-reactnative",
+  "homepage": "https://github.com/aptabase/aptabase-react-native",
   "license": "MIT",
   "scripts": {
     "build": "vite build"
