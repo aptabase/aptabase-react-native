@@ -2,7 +2,7 @@
 
 # React Native SDK for Aptabase
 
-Instrument your React Native apps with Aptabase, an Open Source, Privacy-First and Simple Analytics for Mobile, Desktop and Web Apps.
+Instrument your React Native or Expo apps with Aptabase, an Open Source, Privacy-First and Simple Analytics for Mobile, Desktop and Web Apps.
 
 ## Install
 
@@ -20,7 +20,7 @@ yarn add @aptabase/react-native
 
 First you need to get your `App Key` from Aptabase, you can find it in the `Instructions` menu on the left side menu.
 
-Initialize the SDK as early as possible, ideally before calling `AppRegistry.registerComponent`:
+Initialize the SDK as early as possible, ideally before the declaring the `App` component:
 
 ```js
 import { init } from "@aptabase/react-native";
