@@ -6,14 +6,10 @@ Instrument your React Native or Expo apps with Aptabase, an Open Source, Privacy
 
 ## Install
 
-Install the SDK using your preferred JavaScript package manager
+Install the SDK using `npm` or your preferred JavaScript package manager
 
 ```bash
-pnpm add @aptabase/react-native
-# or
 npm add @aptabase/react-native
-# or
-yarn add @aptabase/react-native
 ```
 
 ## Usage
@@ -36,6 +32,8 @@ import { trackEvent } from "@aptabase/react-native";
 trackEvent("connect_click"); // An event with no properties
 trackEvent("play_music", { name: "Here comes the sun" }); // An event with a custom property
 ```
+
+**Note for Expo apps:** Events sent during development while running on Expo Go will not have the `App Version` property because native modules are not available in Expo Go. However, when you build your app and run it on a real device, the `App Version` property will be available. Alternative, you can also set the `appVersion` during the `init` call so that it's available during development as well.
 
 A few important notes:
 

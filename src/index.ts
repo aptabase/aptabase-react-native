@@ -2,8 +2,15 @@ import { newSessionId } from "./session";
 import { EnvironmentInfo, getEnvironmentInfo } from "./env";
 import { Platform } from "react-native";
 
+/**
+ * Custom initialization parameters for Aptabase SDK.
+ * Use this when calling the init function.
+ */
 export type AptabaseOptions = {
+  // Host URL for Self-Hosted deployments
   host?: string;
+
+  // Custom appVersion to override the default
   appVersion?: string;
 };
 
@@ -39,6 +46,11 @@ function getBaseUrl(
   return _hosts[region];
 }
 
+/**
+ * Initializes the SDK with given App Key
+ * @param {string} appKey - Aptabase App Key
+ * @param {AptabaseOptions} options - Optional initialization parameters
+ */
 export function init(appKey: string, options?: AptabaseOptions) {
   _appKey = appKey;
 
@@ -61,8 +73,17 @@ export function init(appKey: string, options?: AptabaseOptions) {
   const baseUrl = getBaseUrl(parts[1], options);
   _apiUrl = `${baseUrl}/api/v0/event`;
   _env = getEnvironmentInfo();
+
+  if (options?.appVersion) {
+    _env.appVersion = options.appVersion;
+  }
 }
 
+/**
+ * Track an event using given properties
+ * @param {string} eventName - The name of the event to track
+ * @param {Object} props - Optional custom properties
+ */
 export function trackEvent(
   eventName: string,
   props?: Record<string, string | number | boolean>
