@@ -1,5 +1,6 @@
 node_modules
 dist
+coverage
 
 project.xcworkspace
 .DS_Store
