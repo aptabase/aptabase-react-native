@@ -19,9 +19,10 @@ export default defineConfig({
     },
   },
   test: {
-    setupFiles: [
-      "./setupVitest.ts"
-    ]
+    setupFiles: ["./setupVitest.ts"],
+    coverage: {
+      reporter: ["lcov", "text"],
+    },
   },
   plugins: [
     dts(),
