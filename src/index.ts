@@ -1,6 +1,6 @@
 import { newSessionId } from "./session";
 import { EnvironmentInfo, getEnvironmentInfo } from "./env";
-import { Platform } from "react-native";
+import { AppState, Platform } from "react-native";
 import { EventDispatcher } from "./dispatcher";
 
 /**
@@ -15,14 +15,14 @@ export type AptabaseOptions = {
   appVersion?: string;
 
   // Override the default flush interval (in milliseconds)
-  flushInterval?: string;
+  flushInterval?: number;
 };
 
 // Session expires after 1 hour of inactivity
-const SESSION_TIMEOUT = 1 * 60 * 60;
+const SESSION_TIMEOUT = 3600;
 
-const RELEASE_FLUSH_INTERVAL = 60 * 1000;
-const DEBUG_FLUSH_INTERVAL = 2 * 1000;
+// Flush events every 60 seconds in production, or 2 seconds in development
+const FLUSH_INTERVAL = __DEV__ ? 2000 : 60000;
 
 let _sessionId = newSessionId();
 let _lastTouched = new Date();
@@ -34,7 +34,7 @@ let _dispatcher: EventDispatcher | undefined;
 const _hosts: { [region: string]: string } = {
   US: "https://us.aptabase.com",
   EU: "https://eu.aptabase.com",
-  DEV: "http://localhost:3000",
+  DEV: "http://192.168.0.248:3000",
   SH: "",
 };
 
@@ -53,6 +53,23 @@ function getBaseUrl(
   }
 
   return _hosts[region];
+}
+
+function startPolling(flushInterval: number) {
+  const flush = () => _dispatcher?.flush();
+
+  let interval = setInterval(flush, flushInterval);
+
+  if (AppState.isAvailable) {
+    AppState.addEventListener("change", (next) => {
+      clearInterval(interval);
+      if (next === "background") {
+        flush();
+      } else if (next === "active") {
+        interval = setInterval(flush, flushInterval);
+      }
+    });
+  }
 }
 
 /**
@@ -88,12 +105,8 @@ export function init(appKey: string, options?: AptabaseOptions) {
 
   _dispatcher = new EventDispatcher(_apiUrl, _appKey);
 
-  const flushInterval =
-    options?.flushInterval ?? _env.isDebug
-      ? DEBUG_FLUSH_INTERVAL
-      : RELEASE_FLUSH_INTERVAL;
-
-  setInterval(_dispatcher.flush.bind(_dispatcher), flushInterval);
+  const flushInterval = options?.flushInterval ?? FLUSH_INTERVAL;
+  startPolling(flushInterval);
 }
 
 /**

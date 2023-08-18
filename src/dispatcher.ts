@@ -49,27 +49,35 @@ export class EventDispatcher {
   }
 
   private async _sendEvents(events: Event[]): Promise<void> {
-    const res = await fetch(this.apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "App-Key": this.appKey,
-      },
-      credentials: "omit",
-      body: JSON.stringify(events),
-    });
+    try {
+      const res = await fetch(this.apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "App-Key": this.appKey,
+        },
+        credentials: "omit",
+        body: JSON.stringify(events),
+      });
 
-    if (res.status >= 300) {
-      const reason = await res.text();
-      console.warn(
-        `Aptabase: Failed to send ${events.length} events. Reason: ${res.status} ${reason}`
+      if (res.status < 300) {
+        return Promise.resolve();
+      }
+
+      const reason = `${res.status} ${await res.text()}`;
+      if (res.status < 500) {
+        console.warn(
+          `Aptabase: Failed to send ${events.length} events because of ${reason}. Will not retry.`
+        );
+        return Promise.resolve();
+      }
+
+      throw new Error(reason);
+    } catch (e) {
+      console.error(
+        `Aptabase: Failed to send ${events.length} events. Reason: ${e}`
       );
+      throw e;
     }
-
-    if (res.status >= 500) {
-      throw new Error("Failed to send events");
-    }
-
-    return Promise.resolve();
   }
 }
