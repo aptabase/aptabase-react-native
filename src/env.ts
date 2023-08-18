@@ -10,8 +10,8 @@ export interface EnvironmentInfo {
   appVersion: string;
   appBuildNumber: string;
   sdkVersion: string;
-  osName: String;
-  osVersion: String;
+  osName: string;
+  osVersion: string;
 }
 
 export function getEnvironmentInfo(): EnvironmentInfo {

@@ -18,6 +18,11 @@ export default defineConfig({
       external: ["react", "react-native"],
     },
   },
+  test: {
+    setupFiles: [
+      "./setupVitest.ts"
+    ]
+  },
   plugins: [
     dts(),
     replace({

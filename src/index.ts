@@ -1,6 +1,7 @@
 import { newSessionId } from "./session";
 import { EnvironmentInfo, getEnvironmentInfo } from "./env";
 import { Platform } from "react-native";
+import { EventDispatcher } from "./dispatcher";
 
 /**
  * Custom initialization parameters for Aptabase SDK.
@@ -12,15 +13,23 @@ export type AptabaseOptions = {
 
   // Custom appVersion to override the default
   appVersion?: string;
+
+  // Override the default flush interval (in milliseconds)
+  flushInterval?: string;
 };
 
 // Session expires after 1 hour of inactivity
 const SESSION_TIMEOUT = 1 * 60 * 60;
+
+const RELEASE_FLUSH_INTERVAL = 60 * 1000;
+const DEBUG_FLUSH_INTERVAL = 2 * 1000;
+
 let _sessionId = newSessionId();
 let _lastTouched = new Date();
 let _appKey = "";
 let _apiUrl = "";
 let _env: EnvironmentInfo | undefined;
+let _dispatcher: EventDispatcher | undefined;
 
 const _hosts: { [region: string]: string } = {
   US: "https://us.aptabase.com",
@@ -54,13 +63,12 @@ function getBaseUrl(
 export function init(appKey: string, options?: AptabaseOptions) {
   _appKey = appKey;
 
-  if (Platform.OS !== 'android' && Platform.OS !== 'ios') {
+  if (Platform.OS !== "android" && Platform.OS !== "ios") {
     console.warn(
       "Aptabase: This SDK is only supported on Android and iOS. Tracking will be disabled."
     );
     return;
   }
-
 
   const parts = appKey.split("-");
   if (parts.length !== 3 || _hosts[parts[1]] === undefined) {
@@ -71,12 +79,21 @@ export function init(appKey: string, options?: AptabaseOptions) {
   }
 
   const baseUrl = getBaseUrl(parts[1], options);
-  _apiUrl = `${baseUrl}/api/v0/event`;
+  _apiUrl = `${baseUrl}/api/v0/events`;
   _env = getEnvironmentInfo();
 
   if (options?.appVersion) {
     _env.appVersion = options.appVersion;
   }
+
+  _dispatcher = new EventDispatcher(_apiUrl, _appKey);
+
+  const flushInterval =
+    options?.flushInterval ?? _env.isDebug
+      ? DEBUG_FLUSH_INTERVAL
+      : RELEASE_FLUSH_INTERVAL;
+
+  setInterval(_dispatcher.flush.bind(_dispatcher), flushInterval);
 }
 
 /**
@@ -88,7 +105,7 @@ export function trackEvent(
   eventName: string,
   props?: Record<string, string | number | boolean>
 ) {
-  if (!_appKey || !_env) return;
+  if (!_dispatcher || !_env) return;
 
   let now = new Date();
   const diffInMs = now.getTime() - _lastTouched.getTime();
@@ -98,7 +115,7 @@ export function trackEvent(
   }
   _lastTouched = now;
 
-  const body = JSON.stringify({
+  _dispatcher.enqueue({
     timestamp: new Date().toISOString(),
     sessionId: _sessionId,
     eventName: eventName,
@@ -112,22 +129,4 @@ export function trackEvent(
     },
     props: props,
   });
-
-  fetch(_apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "App-Key": _appKey,
-    },
-    credentials: "omit",
-    body,
-  })
-    .then((res) => {
-      if (res.status >= 300) {
-        console.warn(
-          `Aptabase: Failed to send event "${eventName}": ${res.status} ${res.statusText}`
-        );
-      }
-    })
-    .catch(console.error);
 }
