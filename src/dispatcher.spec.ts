@@ -123,4 +123,18 @@ describe("EventDispatcher", () => {
     expectRequestCount(2);
     await expectEventsCount(1, 1);
   });
+
+  it("should not retry requests that failed with 4xx", async () => {
+    fetchMock.mockResponseOnce("{}", { status: 400 });
+
+    dispatcher.enqueue(createEvent("hello_world"));
+    await dispatcher.flush();
+
+    expectRequestCount(1);
+    await expectEventsCount(0, 1);
+
+    await dispatcher.flush();
+
+    expectRequestCount(1);
+  });
 });

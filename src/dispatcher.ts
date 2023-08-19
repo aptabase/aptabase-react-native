@@ -1,20 +1,5 @@
-import { AptabaseOptions } from ".";
+import type { Event } from "./types";
 import { EnvironmentInfo } from "./env";
-
-export type Event = {
-  timestamp: string;
-  sessionId: string;
-  eventName: string;
-  systemProps: {
-    isDebug: boolean;
-    locale: string;
-    osName: string;
-    osVersion: string;
-    appVersion: string;
-    sdkVersion: string;
-  };
-  props?: Record<string, string | number | boolean>;
-};
 
 export class EventDispatcher {
   private _events: Event[] = [];
