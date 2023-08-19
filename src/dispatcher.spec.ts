@@ -1,19 +1,23 @@
 import "vitest-fetch-mock";
 import { EventDispatcher } from "./dispatcher";
 import { beforeEach, describe, expect, it } from "vitest";
+import { EnvironmentInfo } from "./env";
+
+const env: EnvironmentInfo = {
+  isDebug: false,
+  locale: "en-US",
+  osName: "iOS",
+  osVersion: "14.3",
+  appVersion: "1.0.0",
+  appBuildNumber: "1",
+  sdkVersion: "aptabase-reactnative@1.0.0",
+};
 
 const createEvent = (eventName: string) => ({
   timestamp: new Date().toISOString(),
   sessionId: "123",
   eventName,
-  systemProps: {
-    isDebug: false,
-    locale: "en-US",
-    osName: "iOS",
-    osVersion: "14.3",
-    appVersion: "1.0.0",
-    sdkVersion: "1.0.0",
-  },
+  systemProps: { ...env },
 });
 
 const expectRequestCount = (count: number) => {
@@ -24,7 +28,7 @@ const expectEventsCount = async (
   requestIndex: number,
   expectedNumOfEvents: number
 ) => {
-  const body = await fetchMock.requests()[requestIndex].json();
+  const body = await fetchMock.requests().at(requestIndex)?.json();
   expect(body.length).toEqual(expectedNumOfEvents);
 };
 
@@ -32,7 +36,11 @@ describe("EventDispatcher", () => {
   let dispatcher: EventDispatcher;
 
   beforeEach(() => {
-    dispatcher = new EventDispatcher("https://localhost:3000", "A-DEV-000");
+    dispatcher = new EventDispatcher(
+      "A-DEV-000",
+      "https://localhost:3000",
+      env
+    );
     fetchMock.resetMocks();
   });
 
@@ -40,6 +48,18 @@ describe("EventDispatcher", () => {
     await dispatcher.flush();
 
     expectRequestCount(0);
+  });
+
+  it("should send even with correct headers", async () => {
+    dispatcher.enqueue(createEvent("app_started"));
+    await dispatcher.flush();
+
+    const request = await fetchMock.requests().at(0);
+    expect(request).not.toBeUndefined();
+    expect(request?.url).toEqual("https://localhost:3000/api/v0/events");
+    expect(request?.headers.get("Content-Type")).toEqual("application/json");
+    expect(request?.headers.get("App-Key")).toEqual("A-DEV-000");
+    expect(request?.headers.get("User-Agent")).toEqual("iOS/14.3 en-US");
   });
 
   it("should dispatch single event", async () => {
@@ -102,5 +122,19 @@ describe("EventDispatcher", () => {
 
     expectRequestCount(2);
     await expectEventsCount(1, 1);
+  });
+
+  it("should not retry requests that failed with 4xx", async () => {
+    fetchMock.mockResponseOnce("{}", { status: 400 });
+
+    dispatcher.enqueue(createEvent("hello_world"));
+    await dispatcher.flush();
+
+    expectRequestCount(1);
+    await expectEventsCount(0, 1);
+
+    await dispatcher.flush();
+
+    expectRequestCount(1);
   });
 });
