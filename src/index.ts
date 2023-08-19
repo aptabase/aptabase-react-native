@@ -26,8 +26,6 @@ const FLUSH_INTERVAL = __DEV__ ? 2000 : 60000;
 
 let _sessionId = newSessionId();
 let _lastTouched = new Date();
-let _appKey = "";
-let _apiUrl = "";
 let _env: EnvironmentInfo | undefined;
 let _dispatcher: EventDispatcher | undefined;
 
@@ -78,8 +76,6 @@ function startPolling(flushInterval: number) {
  * @param {AptabaseOptions} options - Optional initialization parameters
  */
 export function init(appKey: string, options?: AptabaseOptions) {
-  _appKey = appKey;
-
   if (Platform.OS !== "android" && Platform.OS !== "ios") {
     console.warn(
       "Aptabase: This SDK is only supported on Android and iOS. Tracking will be disabled."
@@ -96,14 +92,14 @@ export function init(appKey: string, options?: AptabaseOptions) {
   }
 
   const baseUrl = getBaseUrl(parts[1], options);
-  _apiUrl = `${baseUrl}/api/v0/events`;
-  _env = getEnvironmentInfo();
+  if (!baseUrl) return;
 
+  _env = getEnvironmentInfo();
   if (options?.appVersion) {
     _env.appVersion = options.appVersion;
   }
 
-  _dispatcher = new EventDispatcher(_apiUrl, _appKey);
+  _dispatcher = new EventDispatcher(appKey, baseUrl, _env);
 
   const flushInterval = options?.flushInterval ?? FLUSH_INTERVAL;
   startPolling(flushInterval);

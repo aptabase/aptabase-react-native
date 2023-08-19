@@ -1,3 +1,6 @@
+import { AptabaseOptions } from ".";
+import { EnvironmentInfo } from "./env";
+
 export type Event = {
   timestamp: string;
   sessionId: string;
@@ -16,8 +19,17 @@ export type Event = {
 export class EventDispatcher {
   private _events: Event[] = [];
   private MAX_BATCH_SIZE = 25;
+  private headers: Headers;
+  private apiUrl: string;
 
-  constructor(private apiUrl: string, private appKey: string) {}
+  constructor(appKey: string, baseUrl: string, env: EnvironmentInfo) {
+    this.apiUrl = `${baseUrl}/api/v0/events`;
+    this.headers = new Headers({
+      "Content-Type": "application/json",
+      "App-Key": appKey,
+      "User-Agent": `${env.osName}/${env.osVersion} ${env.locale}`,
+    });
+  }
 
   public enqueue(evt: Event | Event[]) {
     if (Array.isArray(evt)) {
@@ -52,10 +64,7 @@ export class EventDispatcher {
     try {
       const res = await fetch(this.apiUrl, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "App-Key": this.appKey,
-        },
+        headers: this.headers,
         credentials: "omit",
         body: JSON.stringify(events),
       });
