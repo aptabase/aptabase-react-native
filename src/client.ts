@@ -16,11 +16,11 @@ export class AptabaseClient {
     const [_, region] = appKey.split("-");
     const baseUrl = this.getBaseUrl(region, options);
 
+    this._env = { ...env };
     if (options?.appVersion) {
-      env.appVersion = options.appVersion;
+      this._env.appVersion = options.appVersion;
     }
 
-    this._env = env;
     this._dispatcher = new EventDispatcher(appKey, baseUrl, env);
   }
 
@@ -38,6 +38,7 @@ export class AptabaseClient {
         osName: this._env.osName,
         osVersion: this._env.osVersion,
         appVersion: this._env.appVersion,
+        appBuildNumber: this._env.appBuildNumber,
         sdkVersion: this._env.sdkVersion,
       },
       props: props,
@@ -57,15 +58,14 @@ export class AptabaseClient {
     }
   }
 
-  public flush() {
-    this._dispatcher.flush();
+  public flush(): Promise<void> {
+    return this._dispatcher.flush();
   }
 
   private evalSessionId() {
     let now = new Date();
     const diffInMs = now.getTime() - this._lastTouched.getTime();
-    const diffInSec = Math.floor(diffInMs / 1000);
-    if (diffInSec > SESSION_TIMEOUT) {
+    if (diffInMs > SESSION_TIMEOUT) {
       this._sessionId = newSessionId();
     }
     this._lastTouched = now;

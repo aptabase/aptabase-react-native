@@ -1,5 +1,5 @@
 // Session expires after 1 hour of inactivity
-export const SESSION_TIMEOUT = 3600;
+export const SESSION_TIMEOUT = 60 * 60 * 1000;
 
 // Flush events every 60 seconds in production, or 2 seconds in development
 export const FLUSH_INTERVAL = __DEV__ ? 2000 : 60000;

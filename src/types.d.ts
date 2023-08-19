@@ -26,6 +26,7 @@ export type Event = {
     osName: string;
     osVersion: string;
     appVersion: string;
+    appBuildNumber: string;
     sdkVersion: string;
   };
   props?: Record<string, string | number | boolean>;
