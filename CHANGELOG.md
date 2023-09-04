@@ -1,3 +1,8 @@
+## 0.2.1
+
+- Move bunlder to `tsup`
+- export type `AptabaseOptions`
+
 ## 0.2.0
 
 - Automatic flush of events on app exit

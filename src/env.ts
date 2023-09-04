@@ -2,7 +2,7 @@ import { Platform } from "react-native";
 import version from "./version";
 
 // env.PKG_VERSION is replaced by Vite during build phase
-const sdkVersion = "aptabase-reactnative@env.PKG_VERSION";
+const sdkVersion = `aptabase-reactnative@${process.env.PKG_VERSION}`;
 
 export interface EnvironmentInfo {
   isDebug: boolean;
