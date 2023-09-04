@@ -5,6 +5,8 @@ import { AptabaseClient } from "./client";
 import { FLUSH_INTERVAL } from "./constants";
 import { validate } from "./validate";
 
+export type { AptabaseOptions };
+
 let _client: AptabaseClient | undefined;
 
 /**

@@ -13,12 +13,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
-    "types": ["react-native"],
+    "types": ["react-native","node"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
     "lib": ["esnext", "dom"]
   },
-  "include": ["src/index.ts", "*.d.ts"]
+  "include": ["src/index.ts"]
 }
