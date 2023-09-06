@@ -1,3 +1,7 @@
+## 0.2.2
+
+- Fix bundled file names
+
 ## 0.2.1
 
 - Move bunlder to `tsup`
