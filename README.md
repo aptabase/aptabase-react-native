@@ -16,21 +16,45 @@ npm add @aptabase/react-native
 
 First, you need to get your `App Key` from Aptabase, you can find it in the `Instructions` menu on the left side menu.
 
-Initialize the SDK as early as possible, ideally before declaring the `App` component:
+Initialize the SDK by using the `AptabaseProvider` on your `App` component:
 
 ```js
-import { init } from "@aptabase/react-native";
-
-init("<YOUR_APP_KEY>"); // 👈 this is where you enter your App Key
+export default function App() {
+  return (
+    <AptabaseProvider appKey="<YOUR_APP_KEY>">
+      <Counter />
+    </AptabaseProvider>
+  );
+}
 ```
 
-Afterwards, you can start tracking events with `trackEvent`:
+Afterwards, you can start tracking events with `trackEvent` from `useAptabase` hook:
 
 ```js
-import { trackEvent } from "@aptabase/react-native";
+import { useAptabase } from "@aptabase/react-native";
 
-trackEvent("app_started"); // An event with no properties
-trackEvent("screen_view", { name: "Settings" }); // An event with a custom property
+export function Counter() {
+  const { trackEvent } = useAptabase();
+  const [count, setCount] = useState(0);
+
+  const increment = () => {
+    setCount(count + 1);
+    trackEvent("increment", { count });
+  };
+
+  const decrement = () => {
+    setCount(count - 1);
+    trackEvent("decrement", { count });
+  };
+
+  return (
+    <View>
+      <Button onPress={increment} title="Increment" />
+      <Button onPress={decrement} title="Decrement" />
+      <Text>Count is {count}</Text>
+    </View>
+  );
+}
 ```
 
 **Note for Expo apps:** Events sent during development while running on Expo Go will not have the `App Version` property because native modules are not available in Expo Go. However, when you build your app and run it on a real device, the `App Version` property will be available. Alternatively, you can also set the `appVersion` during the `init` call so that it's available during development as well.
@@ -46,4 +70,3 @@ A few important notes:
 ## Preparing for Submission to Apple App Store
 
 When submitting your app to the Apple App Store, you'll need to fill out the `App Privacy` form. You can find all the answers on our [How to fill out the Apple App Privacy when using Aptabase](https://aptabase.com/docs/apple-app-privacy) guide.
-

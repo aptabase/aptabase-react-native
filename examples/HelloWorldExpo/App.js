@@ -1,21 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, Text, View } from "react-native";
-import { init, trackEvent } from "@aptabase/react-native";
-
-init("A-DEV-0000000000");
-trackEvent("app_started");
+import { StyleSheet, Text, View } from "react-native";
+import { AptabaseProvider } from "@aptabase/react-native";
+import { Counter } from "./Counter";
 
 export default function App() {
-  const onClick = () => {
-    trackEvent("Hello");
-  };
-
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <Button onPress={onClick} title="Click Me" color="#841584" />
-      <StatusBar style="auto" />
-    </View>
+    <AptabaseProvider appKey="A-US-0928558097">
+      <View style={styles.container}>
+        <Text>Open up App.js to start working on your app!</Text>
+        <Counter />
+        <StatusBar style="auto" />
+      </View>
+    </AptabaseProvider>
   );
 }
 

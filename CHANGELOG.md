@@ -1,3 +1,7 @@
+## 0.3.0
+
+- Added a new `AptabaseProvider` and `useAptabase` hook to make usage easier
+
 ## 0.2.2
 
 - Fix bundled file names
