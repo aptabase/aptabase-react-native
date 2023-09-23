@@ -1,16 +1,15 @@
-
-import { NativeModules } from 'react-native';
+import { NativeModules } from "react-native";
 
 const { RNAptabaseModule } = NativeModules;
 
 type VersionObject = {
-  appVersion: string | undefined,
-  appBuildNumber: string | undefined,
+  appVersion: string;
+  appBuildNumber: string;
 };
 
 const Version: VersionObject = {
-  appVersion: RNAptabaseModule && RNAptabaseModule.appVersion,
-  appBuildNumber: RNAptabaseModule && RNAptabaseModule.appBuildNumber,
+  appVersion: RNAptabaseModule?.appVersion?.toString() ?? "",
+  appBuildNumber: RNAptabaseModule?.appBuildNumber?.toString() ?? "",
 };
 
 export default Version;

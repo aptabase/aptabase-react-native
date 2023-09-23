@@ -20,8 +20,8 @@ export function getEnvironmentInfo(): EnvironmentInfo {
   const locale = "en-US";
 
   return {
-    appVersion: version.appVersion || "",
-    appBuildNumber: version.appBuildNumber || "",
+    appVersion: version.appVersion,
+    appBuildNumber: version.appBuildNumber,
     isDebug: __DEV__,
     locale,
     osName,

@@ -10,7 +10,7 @@ export class AptabaseClient {
   private readonly _env: EnvironmentInfo;
   private _sessionId = newSessionId();
   private _lastTouched = new Date();
-  private _flushTimer: number | undefined;
+  private _flushTimer: NodeJS.Timeout | undefined;
 
   constructor(appKey: string, env: EnvironmentInfo, options?: AptabaseOptions) {
     const [_, region] = appKey.split("-");
