@@ -1,3 +1,7 @@
+## 0.3.1
+
+- Fixed an issue where the `appBuildNumber` would sometimes be sent as a number instead of a string
+
 ## 0.3.0
 
 - Added a new `AptabaseProvider` and `useAptabase` hook to make usage easier
