@@ -51,5 +51,15 @@ export function trackEvent(
   eventName: string,
   props?: Record<string, string | number | boolean>
 ) {
+  if (!!props && !isPlainObject(props)) {
+    console.warn(
+      `Aptabase: trackEvent was called with invalid properties. The second parameter must be an object.`
+    );
+    return;
+  }
+
   _client?.trackEvent(eventName, props);
 }
+
+const isPlainObject = (val: any) =>
+  typeof val === "object" && val.constructor === Object;

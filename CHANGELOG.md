@@ -1,3 +1,7 @@
+## 0.3.2
+
+- Added a warning log when trackEvent is called with invalid parameters
+
 ## 0.3.1
 
 - Fixed an issue where the `appBuildNumber` would sometimes be sent as a number instead of a string
