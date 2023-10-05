@@ -19,6 +19,8 @@ First, you need to get your `App Key` from Aptabase, you can find it in the `Ins
 Initialize the SDK by using the `AptabaseProvider` on your `App` component:
 
 ```js
+import { AptabaseProvider } from "@aptabase/react-native";
+
 export default function App() {
   return (
     <AptabaseProvider appKey="<YOUR_APP_KEY>">
@@ -32,6 +34,7 @@ Afterwards, you can start tracking events with `trackEvent` from `useAptabase` h
 
 ```js
 import { useAptabase } from "@aptabase/react-native";
+import { useState } from "react";
 
 export function Counter() {
   const { trackEvent } = useAptabase();
