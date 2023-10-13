@@ -1,3 +1,7 @@
+## 0.3.3
+
+- Changes the way we flush events when app state changes.
+
 ## 0.3.2
 
 - Added a warning log when trackEvent is called with invalid parameters

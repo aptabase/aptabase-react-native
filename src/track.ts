@@ -28,16 +28,12 @@ export function init(appKey: string, options?: AptabaseOptions) {
   if (!AppState.isAvailable) return;
 
   AppState.addEventListener("change", (next) => {
-    _client?.stopPolling();
+    _client?.flush();
 
-    switch (next) {
-      case "active":
-        _client?.startPolling(flushInterval);
-        break;
-
-      case "background":
-        _client?.flush();
-        break;
+    if (next === "active") {
+      _client?.startPolling(flushInterval);
+    } else {
+      _client?.stopPolling();
     }
   });
 }
