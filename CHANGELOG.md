@@ -1,3 +1,7 @@
+## 0.3.5
+
+- better version of the session id generator
+
 ## 0.3.4
 
 - use new session id format
