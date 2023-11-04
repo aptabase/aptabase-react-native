@@ -1,19 +1,5 @@
-export function newSessionId() {
-  return [
-    randomStr(8),
-    randomStr(4),
-    randomStr(4),
-    randomStr(4),
-    randomStr(12),
-  ].join("-");
-}
-
-const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-const charactersLength = characters.length;
-function randomStr(len: number) {
-  let result = "";
-  for (let i = 0; i < len; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
+export function newSessionId(): string {
+  const epochInSeconds = BigInt(Math.floor(Date.now() / 1000));
+  const random = BigInt(Math.floor(Math.random() * 100000000));
+  return (epochInSeconds * 100000000n + random).toString();
 }

@@ -1,3 +1,7 @@
+## 0.3.4
+
+- use new session id format
+
 ## 0.3.3
 
 - Changes the way we flush events when app state changes.

@@ -1,6 +1,6 @@
 {
   "name": "@aptabase/react-native",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": false,
   "description": "React Native SDK for Aptabase: Open Source, Privacy-First and Simple Analytics for Mobile, Desktop and Web Apps",
   "sideEffects": false,
