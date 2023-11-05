@@ -21,7 +21,7 @@ describe("Validate", () => {
       platform: "web" as const,
       appKey: "A-DEV-000",
       options: undefined,
-      expected: [false, "This SDK is only supported on Android and iOS."],
+      expected: [false, "This SDK is only supported on Android and iOS"],
     },
     {
       platform: "ios" as const,

@@ -9,7 +9,7 @@ export function validate(
   options?: AptabaseOptions
 ): [boolean, string] {
   if (platform !== "android" && platform !== "ios") {
-    return [false, "This SDK is only supported on Android and iOS."];
+    return [false, "This SDK is only supported on Android and iOS"];
   }
 
   const parts = appKey.split("-");
@@ -20,7 +20,7 @@ export function validate(
   if (parts[1] === "SH" && !options?.host) {
     return [
       false,
-      `Host parameter must be defined when using Self-Hosted App Key.`,
+      `Host parameter must be defined when using Self-Hosted App Key`,
     ];
   }
 

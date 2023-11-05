@@ -1,3 +1,7 @@
+## 0.3.6
+
+- fix compilation error on web apps
+
 ## 0.3.5
 
 - better version of the session id generator
