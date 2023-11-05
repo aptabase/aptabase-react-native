@@ -3,8 +3,9 @@ const { version } = require("./package.json");
 
 export default defineConfig({
   entry: ["src/index.ts"],
-  format: ["cjs", "esm"],
+  format: ["esm"],
   dts: true,
+  target: "es6",
   splitting: false,
   minify: true,
   sourcemap: true,
@@ -12,9 +13,7 @@ export default defineConfig({
   env: {
     PKG_VERSION: version,
   },
-  outExtension({ format }) {
-    return {
-      js: `.${format === "esm" ? "mjs" : "cjs"}`,
-    };
+  outExtension() {
+    return { js: ".js" };
   },
 });

@@ -1,3 +1,7 @@
+## 0.3.7
+
+- use ESM only
+
 ## 0.3.6
 
 - fix compilation error on web apps
