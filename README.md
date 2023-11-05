@@ -16,28 +16,25 @@ npm add @aptabase/react-native
 
 First, you need to get your `App Key` from Aptabase, you can find it in the `Instructions` menu on the left side menu.
 
-Initialize the SDK by using the `AptabaseProvider` on your `App` component:
+Initialize the SDK by calling the `init` function before declaring your `App` component:
 
 ```js
-import { AptabaseProvider } from "@aptabase/react-native";
+import Aptabase from "@aptabase/react-native";
+
+Aptabase.init("<YOUR_APP_KEY>"); // 👈 this is where you enter your App Key
 
 export default function App() {
-  return (
-    <AptabaseProvider appKey="<YOUR_APP_KEY>">
-      <Counter />
-    </AptabaseProvider>
-  );
+  return <Counter />;
 }
 ```
 
-Afterwards, you can start tracking events with `trackEvent` from `useAptabase` hook:
+Afterwards, you can start tracking events with `trackEvent`:
 
 ```js
-import { useAptabase } from "@aptabase/react-native";
+import { trackEvent } from "@aptabase/react-native";
 import { useState } from "react";
 
 export function Counter() {
-  const { trackEvent } = useAptabase();
   const [count, setCount] = useState(0);
 
   const increment = () => {
@@ -60,7 +57,7 @@ export function Counter() {
 }
 ```
 
-**Note for Expo apps:** Events sent during development while running on Expo Go will not have the `App Version` property because native modules are not available in Expo Go. However, when you build your app and run it on a real device, the `App Version` property will be available. Alternatively, you can also set the `appVersion` during the `AptabaseProvider` initialization so that it's available during development as well.
+**Note for Expo apps:** Events sent during development while running on Expo Go will not have the `App Version` property because native modules are not available in Expo Go. However, when you build your app and run it on a real device, the `App Version` property will be available. Alternatively, you can also set the `appVersion` during the `init` call so that it's also available during development.
 
 A few important notes:
 
