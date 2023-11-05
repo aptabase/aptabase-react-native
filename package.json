@@ -1,12 +1,12 @@
 {
   "name": "@aptabase/react-native",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "private": false,
   "description": "React Native SDK for Aptabase: Open Source, Privacy-First and Simple Analytics for Mobile, Desktop and Web Apps",
   "sideEffects": false,
   "author": "goenning <goenning@aptabase.com>",
   "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aptabase/aptabase-react-native.git"

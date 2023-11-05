@@ -1,3 +1,7 @@
+## 0.3.8
+
+- fix typing definitions
+
 ## 0.3.7
 
 - use ESM only
