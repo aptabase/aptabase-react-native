@@ -33,7 +33,7 @@ export function getEnvironmentInfo(): EnvironmentInfo {
 function getOperatingSystem(): [string, string] {
   switch (Platform.OS) {
     case "android":
-      return ["Android", Platform.Version.toString()];
+      return ["Android", Platform.constants.Release];
     case "ios":
       if (Platform.isPad) {
         return ["iPadOS", Platform.Version];

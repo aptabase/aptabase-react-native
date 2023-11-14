@@ -1,3 +1,7 @@
+## 0.3.9
+
+- Change from `API Version` to `Android Version`
+
 ## 0.3.8
 
 - fix typing definitions
