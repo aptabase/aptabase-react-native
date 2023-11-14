@@ -35,7 +35,7 @@ describe("Validate", () => {
       options: undefined,
       expected: [
         false,
-        "Host parameter must be defined when using Self-Hosted App Key.",
+        "Host parameter must be defined when using Self-Hosted App Key",
       ],
     },
   ].forEach(({ platform, appKey, options, expected }) => {
