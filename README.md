@@ -12,6 +12,14 @@ Install the SDK using `npm` or your preferred JavaScript package manager
 npm add @aptabase/react-native
 ```
 
+## Android Requirements
+
+If you're targeting Android, you'll need to add the following permissions to your `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+```
+
 ## Usage
 
 First, you need to get your `App Key` from Aptabase, you can find it in the `Instructions` menu on the left side menu.
