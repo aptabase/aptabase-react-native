@@ -16,8 +16,7 @@ export function init(appKey: string, options?: AptabaseOptions) {
   const [ok, msg] = validate(Platform.OS, appKey, options);
   if (!ok) {
     if (_client) {
-      _client.stopPolling();
-      _client = undefined;
+      dispose();
     }
     console.warn(`Aptabase: ${msg}. Tracking will be disabled.`);
     return;
@@ -40,6 +39,18 @@ export function init(appKey: string, options?: AptabaseOptions) {
       _client?.stopPolling();
     }
   });
+}
+
+/**
+ * Dispose the SDK and stop tracking events
+ */
+export function dispose() {
+  if (_client) {
+    _client.stopPolling();
+    _client = undefined;
+  } else {
+    console.warn(`Aptabase: dispose was called but SDK was not initialized.`);
+  }
 }
 
 /**
