@@ -39,6 +39,18 @@ export function init(appKey: string, options?: AptabaseOptions) {
 }
 
 /**
+ * Dispose the SDK and stop tracking events
+ */
+export function dispose() {
+  if (_client) {
+    _client.stopPolling();
+    _client = undefined;
+  } else {
+    console.warn(`Aptabase: dispose was called but SDK was not initialized.`);
+  }
+}
+
+/**
  * Track an event using given properties
  * @param {string} eventName - The name of the event to track
  * @param {Object} props - Optional custom properties

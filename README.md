@@ -64,6 +64,12 @@ export function Counter() {
   );
 }
 ```
+To disable tracking events, you can call the `dispose` function. This will stop and deinitalize the SDK.
+```js
+import Aptabase from "@aptabase/react-native";
+
+Aptabase.dispose();
+```
 
 **Note for Expo apps:** Events sent during development while running on Expo Go will not have the `App Version` property because native modules are not available in Expo Go. However, when you build your app and run it on a real device, the `App Version` property will be available. Alternatively, you can also set the `appVersion` during the `init` call so that it's also available during development.
 
