@@ -15,9 +15,6 @@ let _client: AptabaseClient | undefined;
 export function init(appKey: string, options?: AptabaseOptions) {
   const [ok, msg] = validate(Platform.OS, appKey, options);
   if (!ok) {
-    if (_client) {
-      dispose();
-    }
     console.warn(`Aptabase: ${msg}. Tracking will be disabled.`);
     return;
   }
