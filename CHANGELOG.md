@@ -1,3 +1,7 @@
+## 0.3.10
+
+- Add `dispose` function to explicitly stop a started client
+
 ## 0.3.9
 
 - Change from `API Version` to `Android Version`
