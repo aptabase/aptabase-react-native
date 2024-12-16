@@ -1,7 +1,7 @@
 import "vitest-fetch-mock";
-import { EventDispatcher } from "./dispatcher";
+import { NativeEventDispatcher, WebEventDispatcher } from "./dispatcher";
 import { beforeEach, describe, expect, it } from "vitest";
-import { EnvironmentInfo } from "./env";
+import type { EnvironmentInfo } from "./env";
 
 const env: EnvironmentInfo = {
   isDebug: false,
@@ -32,11 +32,11 @@ const expectEventsCount = async (
   expect(body.length).toEqual(expectedNumOfEvents);
 };
 
-describe("EventDispatcher", () => {
-  let dispatcher: EventDispatcher;
+describe("NativeEventDispatcher", () => {
+  let dispatcher: NativeEventDispatcher;
 
   beforeEach(() => {
-    dispatcher = new EventDispatcher(
+    dispatcher = new NativeEventDispatcher(
       "A-DEV-000",
       "https://localhost:3000",
       env
@@ -136,5 +136,65 @@ describe("EventDispatcher", () => {
     await dispatcher.flush();
 
     expectRequestCount(1);
+  });
+});
+
+describe("WebEventDispatcher", () => {
+  let dispatcher: WebEventDispatcher;
+
+  beforeEach(() => {
+    dispatcher = new WebEventDispatcher(
+      "A-DEV-000",
+      "https://localhost:3000",
+      env
+    );
+    fetchMock.resetMocks();
+  });
+
+  it("should send event with correct headers", async () => {
+    dispatcher.enqueue(createEvent("app_started"));
+
+    const request = await fetchMock.requests().at(0);
+    expect(request).not.toBeUndefined();
+    expect(request?.url).toEqual("https://localhost:3000/api/v0/event");
+    expect(request?.headers.get("Content-Type")).toEqual("application/json");
+    expect(request?.headers.get("App-Key")).toEqual("A-DEV-000");
+  });
+
+  it("should dispatch single event", async () => {
+    fetchMock.mockResponseOnce("{}");
+
+    dispatcher.enqueue(createEvent("app_started"));
+
+    expectRequestCount(1);
+    const body = await fetchMock.requests().at(0)?.json();
+    expect(body.eventName).toEqual("app_started");
+  });
+
+  it("should dispatch multiple events individually", async () => {
+    fetchMock.mockResponseOnce("{}");
+    fetchMock.mockResponseOnce("{}");
+
+    dispatcher.enqueue([createEvent("app_started"), createEvent("app_exited")]);
+
+    expectRequestCount(2);
+    const body1 = await fetchMock.requests().at(0)?.json();
+    const body2 = await fetchMock.requests().at(1)?.json();
+    expect(body1.eventName).toEqual("app_started");
+    expect(body2.eventName).toEqual("app_exited");
+  });
+
+  it("should not retry requests that failed with 4xx", async () => {
+    fetchMock.mockResponseOnce("{}", { status: 400 });
+
+    dispatcher.enqueue(createEvent("hello_world"));
+
+    expectRequestCount(1);
+    const body = await fetchMock.requests().at(0)?.json();
+    expect(body.eventName).toEqual("hello_world");
+
+    dispatcher.enqueue(createEvent("hello_world"));
+
+    expectRequestCount(2);
   });
 });

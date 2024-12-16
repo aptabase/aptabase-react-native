@@ -23,8 +23,8 @@ export type Event = {
   systemProps: {
     isDebug: boolean;
     locale: string;
-    osName: string;
-    osVersion: string;
+    osName: string | undefined;
+    osVersion: string | undefined;
     appVersion: string;
     appBuildNumber: string;
     sdkVersion: string;
