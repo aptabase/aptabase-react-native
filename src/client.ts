@@ -1,12 +1,12 @@
-import type { Platform } from "react-native";
+import { Platform } from "react-native";
 import type { AptabaseOptions } from "./types";
 import type { EnvironmentInfo } from "./env";
-import { EventDispatcher } from "./dispatcher";
+import { NativeEventDispatcher, WebEventDispatcher } from "./dispatcher";
 import { newSessionId } from "./session";
 import { HOSTS, SESSION_TIMEOUT } from "./constants";
 
 export class AptabaseClient {
-  private readonly _dispatcher: EventDispatcher;
+  private readonly _dispatcher: WebEventDispatcher | NativeEventDispatcher;
   private readonly _env: EnvironmentInfo;
   private _sessionId = newSessionId();
   private _lastTouched = new Date();
@@ -21,7 +21,12 @@ export class AptabaseClient {
       this._env.appVersion = options.appVersion;
     }
 
-    this._dispatcher = new EventDispatcher(appKey, baseUrl, env);
+    const dispatcher =
+      Platform.OS === "web"
+        ? new WebEventDispatcher(appKey, baseUrl, env)
+        : new NativeEventDispatcher(appKey, baseUrl, env);
+
+    this._dispatcher = dispatcher;
   }
 
   public trackEvent(

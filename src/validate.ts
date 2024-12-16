@@ -3,13 +3,15 @@ import { HOSTS } from "./constants";
 
 import type { AptabaseOptions } from "./types";
 
+const SUPPORTED_PLATFORMS = ["android", "ios", "web"];
+
 export function validate(
   platform: typeof Platform.OS,
   appKey: string,
   options?: AptabaseOptions
 ): [boolean, string] {
-  if (platform !== "android" && platform !== "ios") {
-    return [false, "This SDK is only supported on Android and iOS"];
+  if (!SUPPORTED_PLATFORMS.includes(platform)) {
+    return [false, "This SDK is only supported on Android, iOS and web"];
   }
 
   const parts = appKey.split("-");
