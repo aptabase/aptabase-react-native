@@ -1,4 +1,3 @@
-import { Platform } from "react-native";
 import type { AptabaseOptions } from "./types";
 import type { EnvironmentInfo } from "./env";
 import { NativeEventDispatcher, WebEventDispatcher } from "./dispatcher";
@@ -24,7 +23,7 @@ export class AptabaseClient {
       this._env.appVersion = options.appVersion;
     }
 
-    const isWeb = Platform.OS === "web";
+    const isWeb = this._env.osName === "web";
     const isWebTrackingEnabled = isWeb && options?.enableWeb === true;
 
     console.log("isWebTrackingEnabled", isWebTrackingEnabled);
@@ -47,6 +46,8 @@ export class AptabaseClient {
   ) {
     if (!this._dispatcher) return;
 
+    const isWeb = this._env.osName === "web";
+
     this._dispatcher.enqueue({
       timestamp: new Date().toISOString(),
       sessionId: this.evalSessionId(),
@@ -54,8 +55,8 @@ export class AptabaseClient {
       systemProps: {
         isDebug: this._env.isDebug,
         locale: this._env.locale,
-        osName: this._env.osName,
-        osVersion: this._env.osVersion,
+        osName: isWeb ? undefined : this._env.osName,
+        osVersion: isWeb ? undefined : this._env.osVersion,
         appVersion: this._env.appVersion,
         appBuildNumber: this._env.appBuildNumber,
         sdkVersion: this._env.sdkVersion,

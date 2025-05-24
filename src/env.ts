@@ -40,7 +40,8 @@ export function getEnvironmentInfo(): EnvironmentInfo {
           return ["iPadOS", Platform.Version];
         }
         return ["iOS", Platform.Version];
-      // Web needs to be empty as the server computes these values using the user agent
+      case "web":
+        return ["web", ""];
       default:
         return ["", ""];
     }

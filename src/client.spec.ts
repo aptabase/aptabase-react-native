@@ -119,4 +119,79 @@ describe("AptabaseClient", () => {
     expect(sessionId3).toBeDefined();
     expect(sessionId3).not.toBe(sessionId1);
   });
+
+  describe("Web tracking", () => {
+    const webEnv: EnvironmentInfo = {
+      ...env,
+      osName: "web",
+      osVersion: "web",
+    };
+
+    it("should not track events when web tracking is disabled", async () => {
+      const client = new AptabaseClient("A-DEV-000", webEnv);
+      client.trackEvent("test_event");
+      await client.flush();
+      expect(fetchMock.requests().length).toEqual(0);
+    });
+
+    it("should track events when web tracking is enabled", async () => {
+      const client = new AptabaseClient("A-DEV-000", webEnv, {
+        enableWeb: true,
+      });
+      client.trackEvent("test_event");
+      await client.flush();
+      expect(fetchMock.requests().length).toEqual(1);
+      const body = await fetchMock.requests().at(0)?.json();
+      expect(body.eventName).toEqual("test_event");
+      expect(body.systemProps.osName).toBeUndefined();
+      expect(body.systemProps.osVersion).toBeUndefined();
+    });
+
+    it("should use correct endpoint for web events", async () => {
+      const client = new AptabaseClient("A-DEV-000", webEnv, {
+        enableWeb: true,
+      });
+      client.trackEvent("test_event");
+      await client.flush();
+      const request = fetchMock.requests().at(0);
+      expect(request?.url).toContain("/api/v0/event");
+    });
+
+    it("should use correct endpoint for native events", async () => {
+      const client = new AptabaseClient("A-DEV-000", env);
+      client.trackEvent("test_event");
+      await client.flush();
+      const request = fetchMock.requests().at(0);
+      expect(request?.url).toContain("/api/v0/events");
+    });
+  });
+
+  describe("Native tracking", () => {
+    it("should track events on iOS", async () => {
+      const client = new AptabaseClient("A-DEV-000", env);
+      client.trackEvent("test_event");
+      await client.flush();
+      expect(fetchMock.requests().length).toEqual(1);
+      const body = await fetchMock.requests().at(0)?.json();
+      expect(body[0].eventName).toEqual("test_event");
+      expect(body[0].systemProps.osName).toEqual("iOS");
+      expect(body[0].systemProps.osVersion).toEqual("14.3");
+    });
+
+    it("should track events on Android", async () => {
+      const androidEnv: EnvironmentInfo = {
+        ...env,
+        osName: "Android",
+        osVersion: "13",
+      };
+      const client = new AptabaseClient("A-DEV-000", androidEnv);
+      client.trackEvent("test_event");
+      await client.flush();
+      expect(fetchMock.requests().length).toEqual(1);
+      const body = await fetchMock.requests().at(0)?.json();
+      expect(body[0].eventName).toEqual("test_event");
+      expect(body[0].systemProps.osName).toEqual("Android");
+      expect(body[0].systemProps.osVersion).toEqual("13");
+    });
+  });
 });
