@@ -11,6 +11,9 @@ export type AptabaseOptions = {
 
   // Override the default flush interval (in milliseconds)
   flushInterval?: number;
+
+  // Enable tracking for web platform (disabled by default)
+  enableWeb?: boolean;
 };
 
 /**

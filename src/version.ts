@@ -9,8 +9,8 @@ let Version: VersionObject;
 
 if (Platform.OS === "web") {
   Version = {
-    appVersion: "", // can be manually set in AptabaseOptions
-    appBuildNumber: ""
+    appVersion: "", // can be overrided in AptabaseOptions
+    appBuildNumber: "",
   };
 } else {
   const { RNAptabaseModule } = NativeModules;

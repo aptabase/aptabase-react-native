@@ -6,7 +6,10 @@ import { newSessionId } from "./session";
 import { HOSTS, SESSION_TIMEOUT } from "./constants";
 
 export class AptabaseClient {
-  private readonly _dispatcher: WebEventDispatcher | NativeEventDispatcher;
+  private readonly _dispatcher:
+    | WebEventDispatcher
+    | NativeEventDispatcher
+    | null;
   private readonly _env: EnvironmentInfo;
   private _sessionId = newSessionId();
   private _lastTouched = new Date();
@@ -21,10 +24,19 @@ export class AptabaseClient {
       this._env.appVersion = options.appVersion;
     }
 
-    const dispatcher =
-      Platform.OS === "web"
+    const isWeb = Platform.OS === "web";
+    const isWebTrackingEnabled = isWeb && options?.enableWeb === true;
+
+    console.log("isWebTrackingEnabled", isWebTrackingEnabled);
+    console.log("isWeb", isWeb);
+    console.log("options?.enableWeb", options?.enableWeb);
+
+    const shouldEnableTracking = !isWeb || isWebTrackingEnabled;
+    const dispatcher = shouldEnableTracking
+      ? isWeb
         ? new WebEventDispatcher(appKey, baseUrl, env)
-        : new NativeEventDispatcher(appKey, baseUrl, env);
+        : new NativeEventDispatcher(appKey, baseUrl, env)
+      : null;
 
     this._dispatcher = dispatcher;
   }
@@ -33,6 +45,8 @@ export class AptabaseClient {
     eventName: string,
     props?: Record<string, string | number | boolean>
   ) {
+    if (!this._dispatcher) return;
+
     this._dispatcher.enqueue({
       timestamp: new Date().toISOString(),
       sessionId: this.evalSessionId(),
@@ -64,6 +78,7 @@ export class AptabaseClient {
   }
 
   public flush(): Promise<void> {
+    if (!this._dispatcher) return Promise.resolve();
     return this._dispatcher.flush();
   }
 
