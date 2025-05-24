@@ -26,10 +26,6 @@ export class AptabaseClient {
     const isWeb = this._env.osName === "web";
     const isWebTrackingEnabled = isWeb && options?.enableWeb === true;
 
-    console.log("isWebTrackingEnabled", isWebTrackingEnabled);
-    console.log("isWeb", isWeb);
-    console.log("options?.enableWeb", options?.enableWeb);
-
     const shouldEnableTracking = !isWeb || isWebTrackingEnabled;
     const dispatcher = shouldEnableTracking
       ? isWeb
