@@ -26,5 +26,12 @@ export function validate(
     ];
   }
 
+  // If platform is web but web tracking is not enabled, log a warning
+  if (platform === "web" && !options?.enableWeb) {
+    console.warn(
+      "Aptabase: Web tracking is disabled by default. Set enableWeb: true in options to enable it."
+    );
+  }
+
   return [true, ""];
 }

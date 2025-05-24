@@ -20,6 +20,19 @@ If you're targeting Android, you'll need to add the following permissions to you
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
+## Web Support
+
+This SDK also supports React Native Web! 
+
+> [!NOTE]
+> This feature is disabled by default. To enable it, you need to pass the `enableWeb` option when initializing the SDK.
+
+```js
+Aptabase.init("<YOUR_APP_KEY>", { enableWeb: true });
+```
+
+When enabled, the SDK will track events in web environments using the same behavior as the web SDKs. Which means that events will be sent immediately to the `/event` endpoint instead of grouped to the `/events` endpoint.
+
 ## Usage
 
 First, you need to get your `App Key` from Aptabase, you can find it in the `Instructions` menu on the left side menu.
@@ -64,7 +77,9 @@ export function Counter() {
   );
 }
 ```
+
 To disable tracking events, you can call the `dispose` function. This will stop and deinitalize the SDK.
+
 ```js
 import Aptabase from "@aptabase/react-native";
 
