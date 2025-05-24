@@ -1,12 +1,14 @@
-import type { Platform } from "react-native";
 import type { AptabaseOptions } from "./types";
 import type { EnvironmentInfo } from "./env";
-import { EventDispatcher } from "./dispatcher";
+import { NativeEventDispatcher, WebEventDispatcher } from "./dispatcher";
 import { newSessionId } from "./session";
 import { HOSTS, SESSION_TIMEOUT } from "./constants";
 
 export class AptabaseClient {
-  private readonly _dispatcher: EventDispatcher;
+  private readonly _dispatcher:
+    | WebEventDispatcher
+    | NativeEventDispatcher
+    | null;
   private readonly _env: EnvironmentInfo;
   private _sessionId = newSessionId();
   private _lastTouched = new Date();
@@ -21,13 +23,27 @@ export class AptabaseClient {
       this._env.appVersion = options.appVersion;
     }
 
-    this._dispatcher = new EventDispatcher(appKey, baseUrl, env);
+    const isWeb = this._env.osName === "web";
+    const isWebTrackingEnabled = isWeb && options?.enableWeb === true;
+
+    const shouldEnableTracking = !isWeb || isWebTrackingEnabled;
+    const dispatcher = shouldEnableTracking
+      ? isWeb
+        ? new WebEventDispatcher(appKey, baseUrl, env)
+        : new NativeEventDispatcher(appKey, baseUrl, env)
+      : null;
+
+    this._dispatcher = dispatcher;
   }
 
   public trackEvent(
     eventName: string,
     props?: Record<string, string | number | boolean>
   ) {
+    if (!this._dispatcher) return;
+
+    const isWeb = this._env.osName === "web";
+
     this._dispatcher.enqueue({
       timestamp: new Date().toISOString(),
       sessionId: this.evalSessionId(),
@@ -35,8 +51,8 @@ export class AptabaseClient {
       systemProps: {
         isDebug: this._env.isDebug,
         locale: this._env.locale,
-        osName: this._env.osName,
-        osVersion: this._env.osVersion,
+        osName: isWeb ? undefined : this._env.osName,
+        osVersion: isWeb ? undefined : this._env.osVersion,
         appVersion: this._env.appVersion,
         appBuildNumber: this._env.appBuildNumber,
         sdkVersion: this._env.sdkVersion,
@@ -59,6 +75,7 @@ export class AptabaseClient {
   }
 
   public flush(): Promise<void> {
+    if (!this._dispatcher) return Promise.resolve();
     return this._dispatcher.flush();
   }
 

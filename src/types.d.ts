@@ -11,6 +11,9 @@ export type AptabaseOptions = {
 
   // Override the default flush interval (in milliseconds)
   flushInterval?: number;
+
+  // Enable tracking for web platform (disabled by default)
+  enableWeb?: boolean;
 };
 
 /**
@@ -23,8 +26,8 @@ export type Event = {
   systemProps: {
     isDebug: boolean;
     locale: string;
-    osName: string;
-    osVersion: string;
+    osName: string | undefined;
+    osVersion: string | undefined;
     appVersion: string;
     appBuildNumber: string;
     sdkVersion: string;
