@@ -5,6 +5,7 @@ export default defineConfig({
     setupFiles: ["./setupVitest.ts"],
     coverage: {
       reporter: ["lcov", "text"],
+      include: ["src/**/*.ts", "src/**/*.tsx"],
     },
   },
 });
