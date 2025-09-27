@@ -1,10 +1,10 @@
 {
   "name": "@aptabase/react-native",
-  "version": "0.3.10",
+  "version": "0.4.0",
   "private": false,
   "description": "React Native SDK for Aptabase: Open Source, Privacy-First and Simple Analytics for Mobile, Desktop and Web Apps",
   "sideEffects": false,
-  "author": "goenning <goenning@aptabase.com>",
+  "author": "Aptabase <support@aptabase.com>",
   "main": "./dist/index.js",
   "types": "./dist/index.d.mts",
   "repository": {
@@ -31,15 +31,16 @@
   ],
   "devDependencies": {
     "@vitest/coverage-v8": "0.34.3",
-    "@types/react": "18.2.22",
+    "@types/react": "~19.1.0",
     "@types/node": "20.5.9",
     "tsup": "7.2.0",
+    "typescript": "~5.9.2",
     "vite": "4.4.9",
     "vitest": "0.34.3",
     "vitest-fetch-mock": "0.2.2"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
+    "react": ">=19.1.0",
+    "react-native": ">=0.81.4"
   }
 }

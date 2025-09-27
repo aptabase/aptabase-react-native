@@ -1,3 +1,7 @@
+## 0.4.0
+
+- Support for React 19
+
 ## 0.3.10
 
 - Add `dispose` function to explicitly stop a started client
