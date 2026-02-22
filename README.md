@@ -84,3 +84,5 @@ A few important notes:
 ## Preparing for Submission to Apple App Store
 
 When submitting your app to the Apple App Store, you'll need to fill out the `App Privacy` form. You can find all the answers on our [How to fill out the Apple App Privacy when using Aptabase](https://aptabase.com/docs/apple-app-privacy) guide.
+
+For AI/LLM integration instructions, see [llms.txt](./llms.txt)
