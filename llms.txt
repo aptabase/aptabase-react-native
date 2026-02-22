@@ -1,0 +1,112 @@
+# Aptabase React Native SDK
+
+> Privacy-first analytics SDK for React Native and Expo apps. Package: @aptabase/react-native. Open source, GDPR-compliant. Supports iOS and Android.
+
+## Installation
+
+```bash
+npm add @aptabase/react-native
+```
+
+Android requires the INTERNET permission in `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+```
+
+## Initialization
+
+Call `init` before rendering your app component:
+
+```js
+import Aptabase from "@aptabase/react-native";
+
+Aptabase.init("<APP_KEY>");
+
+export default function App() {
+  return <MyApp />;
+}
+```
+
+Alternatively, use the React Context provider:
+
+```jsx
+import { AptabaseProvider } from "@aptabase/react-native";
+
+export default function App() {
+  return (
+    <AptabaseProvider appKey="<APP_KEY>">
+      <MyApp />
+    </AptabaseProvider>
+  );
+}
+```
+
+## Track Events
+
+```js
+import { trackEvent } from "@aptabase/react-native";
+
+trackEvent("app_started");
+```
+
+## Track Events with Properties
+
+Properties accept string, number, and boolean values:
+
+```js
+import { trackEvent } from "@aptabase/react-native";
+
+trackEvent("purchase_completed", {
+  product: "subscription",
+  price: 9.99,
+  trial: false,
+});
+```
+
+When using the Context provider, use the `useAptabase` hook:
+
+```jsx
+import { useAptabase } from "@aptabase/react-native";
+
+function MyComponent() {
+  const { trackEvent } = useAptabase();
+  trackEvent("screen_viewed", { screen: "home" });
+}
+```
+
+## Configuration
+
+The `init` function accepts an optional `AptabaseOptions` object:
+
+```js
+Aptabase.init("<APP_KEY>", {
+  host: "https://your-self-hosted-instance.com", // for self-hosted deployments (A-SH-* keys)
+  appVersion: "1.2.3", // override detected app version (useful in Expo Go)
+  flushInterval: 30000, // override flush interval in ms (default: 60s prod, 2s dev)
+});
+```
+
+## Dispose
+
+To stop tracking and deinitialize the SDK:
+
+```js
+import Aptabase from "@aptabase/react-native";
+
+Aptabase.dispose();
+```
+
+## Platform Notes
+
+- Supports iOS and Android via React Native and Expo
+- Events are batched and flushed every 60 seconds in production, every 2 seconds in development
+- Sessions auto-rotate after 1 hour of inactivity
+- Events are flushed when the app goes to background and polling resumes when active
+- In Expo Go, `App Version` is unavailable (native modules not loaded) — use the `appVersion` init option as a workaround
+- The SDK does not track any events automatically — you control what is sent
+- `trackEvent` runs asynchronously in the background — no need to await it
+
+## Cross-Discovery
+
+For all Aptabase SDKs and documentation, see: https://aptabase.com/llms.txt
