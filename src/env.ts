@@ -36,6 +36,10 @@ function getOperatingSystem(): [string, string] {
       return ["Android", Platform.constants.Release];
     case "ios":
       if (Platform.isPad) {
+        if (version.isiOSAppOnMac) {
+          // Version represents the emulated iPadOS version and not the MacOS version
+          return ["MacOS", Platform.Version];
+        }
         return ["iPadOS", Platform.Version];
       }
       return ["iOS", Platform.Version];
