@@ -28,7 +28,10 @@ This SDK also supports React Native Web!
 > This feature is disabled by default. To enable it, you need to pass the `enableWeb` option when initializing the SDK.
 
 ```js
-Aptabase.init("<YOUR_APP_KEY>", { enableWeb: true });
+Aptabase.init("<YOUR_APP_KEY>", {
+  enableWeb: true,
+  appVersion: "1.0.0", // required on web — no native module provides it
+});
 ```
 
 When enabled, the SDK will track events in web environments using the same behavior as the web SDKs. Which means that events will be sent immediately to the `/event` endpoint instead of grouped to the `/events` endpoint.
@@ -78,7 +81,7 @@ export function Counter() {
 }
 ```
 
-To disable tracking events, you can call the `dispose` function. This will stop and deinitalize the SDK.
+To disable tracking events, you can call the `dispose` function. This will stop and deinitialize the SDK.
 
 ```js
 import Aptabase from "@aptabase/react-native";

@@ -62,6 +62,10 @@ export class AptabaseClient {
   }
 
   public startPolling(flushInterval: number) {
+    if (!(this._dispatcher instanceof NativeEventDispatcher)) {
+      return;
+    }
+
     this.stopPolling();
 
     this._flushTimer = setInterval(this.flush.bind(this), flushInterval);

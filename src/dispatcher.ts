@@ -110,10 +110,14 @@ export class WebEventDispatcher extends EventDispatcher {
 
   public enqueue(evt: Event | Event[]): void {
     if (Array.isArray(evt)) {
-      evt.forEach((event) => this._sendEvent(event));
+      evt.forEach((event) => this.dispatchEvent(event));
     } else {
-      this._sendEvent(evt);
+      this.dispatchEvent(evt);
     }
+  }
+
+  private dispatchEvent(event: Event): void {
+    void this._sendEvent(event).catch(() => undefined);
   }
 }
 
