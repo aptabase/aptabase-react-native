@@ -1,3 +1,7 @@
+## 0.5.0
+
+- Adds React Native Web support by @[Robert27](https://github.com/Robert27) in [#13](https://github.com/aptabase/aptabase-react-native/pull/13)
+
 ## 0.4.0
 
 - Support for React 19
