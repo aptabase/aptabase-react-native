@@ -10,8 +10,8 @@ export interface EnvironmentInfo {
   appVersion: string;
   appBuildNumber: string;
   sdkVersion: string;
-  osName: string;
-  osVersion: string;
+  osName: string | undefined;
+  osVersion: string | undefined;
 }
 
 export function getEnvironmentInfo(): EnvironmentInfo {
@@ -19,27 +19,31 @@ export function getEnvironmentInfo(): EnvironmentInfo {
 
   const locale = "en-US";
 
-  return {
+  const envInfo: EnvironmentInfo = {
     appVersion: version.appVersion,
     appBuildNumber: version.appBuildNumber,
     isDebug: __DEV__,
     locale,
-    osName,
-    osVersion,
+    osName: osName,
+    osVersion: osVersion,
     sdkVersion,
   };
-}
 
-function getOperatingSystem(): [string, string] {
-  switch (Platform.OS) {
-    case "android":
-      return ["Android", Platform.constants.Release];
-    case "ios":
-      if (Platform.isPad) {
-        return ["iPadOS", Platform.Version];
-      }
-      return ["iOS", Platform.Version];
-    default:
-      return ["", ""];
+  return envInfo;
+
+  function getOperatingSystem(): [string, string] {
+    switch (Platform.OS) {
+      case "android":
+        return ["Android", Platform.constants.Release];
+      case "ios":
+        if (Platform.isPad) {
+          return ["iPadOS", Platform.Version];
+        }
+        return ["iOS", Platform.Version];
+      case "web":
+        return ["web", ""];
+      default:
+        return ["", ""];
+    }
   }
 }
