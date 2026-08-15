@@ -1,3 +1,9 @@
+## 0.5.1
+
+- Fix Android builds on AGP 8+ by declaring the module `namespace` (moved out of `AndroidManifest.xml`) in [#18](https://github.com/aptabase/aptabase-react-native/pull/18)
+- Modernize native config: Android SDK fallbacks 36/24, Java 17, modern `compileSdk`/`minSdk` DSL; iOS deployment target 15.1 and `React-Core` pod dependency in [#18](https://github.com/aptabase/aptabase-react-native/pull/18)
+- Update build tooling and CI (TypeScript 6, vitest 4, Node 24) in [#18](https://github.com/aptabase/aptabase-react-native/pull/18)
+
 ## 0.5.0
 
 - Adds React Native Web support by @[Robert27](https://github.com/Robert27) in [#13](https://github.com/aptabase/aptabase-react-native/pull/13)
