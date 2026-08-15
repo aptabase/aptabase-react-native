@@ -13,7 +13,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@aptabase/react-native": "^0.3.10",
+    "@aptabase/react-native": "^0.5.0",
     "@expo/vector-icons": "^15.0.2",
     "@react-navigation/native": "^7.1.8",
     "expo": "~54.0.10",
