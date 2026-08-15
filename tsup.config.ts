@@ -4,7 +4,12 @@ const { version } = require("./package.json");
 export default defineConfig({
   entry: ["src/index.ts"],
   format: ["esm"],
-  dts: true,
+  dts: {
+    compilerOptions: {
+      // tsup's dts step injects baseUrl on its own; drop this once tsup stops doing that
+      ignoreDeprecations: "6.0",
+    },
+  },
   target: "es6",
   splitting: false,
   minify: true,
