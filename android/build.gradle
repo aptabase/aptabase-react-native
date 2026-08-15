@@ -5,23 +5,22 @@ def safeExtGet(prop, fallback) {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 27)
-    buildToolsVersion safeExtGet('buildToolsVersion', '27.0.3')
+    namespace = "com.aptabase.aptabase"
+    compileSdk = safeExtGet('compileSdkVersion', 36)
 
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', 16)
-        targetSdkVersion safeExtGet('targetSdkVersion', 27)
-        versionCode 1
-        versionName "1.0"
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
+        minSdk = safeExtGet('minSdkVersion', 24)
     }
-    lintOptions {
-       warning 'InvalidPackage'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
 dependencies {
+    // The React Native Gradle Plugin substitutes this with the exact
+    // com.facebook.react:react-android version used by the consuming app.
+    //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
 }
