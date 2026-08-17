@@ -1,4 +1,4 @@
-import { init, trackEvent } from "./track";
+import { init, trackEvent, trackError } from "./track";
 import { createContext, useEffect, type ReactNode } from "react";
 import { AptabaseOptions } from "./types";
 
@@ -6,6 +6,7 @@ type ContextProps = {};
 
 export type AptabaseClient = {
   trackEvent: typeof trackEvent;
+  trackError: typeof trackError;
 };
 
 const AptabaseContext = createContext<ContextProps>({});
@@ -27,5 +28,5 @@ export function AptabaseProvider({ appKey, options, children }: Props) {
 }
 
 export function useAptabase(): AptabaseClient {
-  return { trackEvent };
+  return { trackEvent, trackError };
 }

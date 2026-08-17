@@ -1,3 +1,11 @@
+## 0.6.0
+
+- Add error reporting: new `trackError(error, { fatal })` function posting structured error reports (type, message, stack trace, severity, kind) with capture-time enrichment and retry on network failures
+- Add optional automatic crash reporting via the `enableCrashReporting` init option (reports uncaught JS errors through the global error handler)
+- `useAptabase` now also returns `trackError`
+- Fix a leak where re-initializing the SDK would register a duplicate AppState listener and `dispose` would not remove it
+- The `DEV` region host now points to `https://localhost:3000`, matching the local backend's HTTPS endpoint
+
 ## 0.5.1
 
 - Fix Android builds on AGP 8+ by declaring the module `namespace` (moved out of `AndroidManifest.xml`) in [#18](https://github.com/aptabase/aptabase-react-native/pull/18)

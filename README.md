@@ -99,6 +99,44 @@ A few important notes:
 3. You do not need to await for the `trackEvent` function, it'll run in the background.
 4. Only strings and numbers values are allowed on custom properties
 
+## Error Reporting
+
+> Error reporting is in beta. Reports appear on the `Errors` page of your Aptabase dashboard.
+
+Use `trackError` to report errors you've caught and handled:
+
+```js
+import { trackError } from "@aptabase/react-native";
+
+try {
+  await doSomething();
+} catch (error) {
+  trackError(error); // severity: error
+}
+```
+
+For errors your app can't recover from, mark the report as fatal:
+
+```js
+trackError(error, { fatal: true }); // severity: fatal
+```
+
+To also report uncaught errors and crashes automatically, enable crash reporting during `init`:
+
+```js
+Aptabase.init("<YOUR_APP_KEY>", {
+  enableCrashReporting: true,
+});
+```
+
+A few important notes about error reporting:
+
+1. Each report includes the error type, message, stack trace, severity (`error` or `fatal`) and how it was captured (`handled`, `unhandled` or `crash`).
+2. On native, reports are sent immediately and kept in memory for retry when the network is unavailable. On web, reports are sent immediately and not retried (web requires the `enableWeb` option).
+3. Errors count against a separate monthly error quota. When the quota is exhausted, the server rejects new reports until it resets.
+4. Errors caught by React Error Boundaries never reach the global error handler — call `trackError` from your boundary if you want them reported.
+5. Native (non-JS) crashes are not captured. During development, fatal JS errors show the RedBox instead of crashing the app.
+
 ## Preparing for Submission to Apple App Store
 
 When submitting your app to the Apple App Store, you'll need to fill out the `App Privacy` form. You can find all the answers on our [How to fill out the Apple App Privacy when using Aptabase](https://aptabase.com/docs/apple-app-privacy) guide.

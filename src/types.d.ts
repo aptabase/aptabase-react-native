@@ -14,6 +14,47 @@ export type AptabaseOptions = {
 
   // Enable tracking for web platform (disabled by default)
   enableWeb?: boolean;
+
+  // Automatically report uncaught errors and crashes (disabled by default)
+  enableCrashReporting?: boolean;
+};
+
+/**
+ * Severity of a reported error: "fatal" for errors the app cannot recover from.
+ */
+export type ErrorSeverity = "fatal" | "error";
+
+/**
+ * How the error was captured: "handled" (manual trackError), "unhandled" or
+ * "crash" (automatic crash reporting), "taskException" (async task failures).
+ */
+export type ErrorKind = "crash" | "unhandled" | "taskException" | "handled";
+
+/**
+ * Optional parameters for the trackError function.
+ */
+export type TrackErrorOptions = {
+  // Report the error as fatal (severity "fatal", kind "crash"). Defaults to false.
+  fatal?: boolean;
+};
+
+/**
+ * An error report sent to the error ingestion endpoint (one object per request).
+ */
+export type ErrorReport = {
+  errorMessage: string;
+  errorType: string;
+  stackTrace?: string;
+  timestamp: string;
+  sessionId: string;
+  platform: string;
+  osName?: string;
+  osVersion?: string;
+  appVersion?: string;
+  sdkVersion?: string;
+  severity: ErrorSeverity;
+  kind: ErrorKind;
+  isDebug: boolean;
 };
 
 /**

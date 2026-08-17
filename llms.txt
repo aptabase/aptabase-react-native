@@ -75,6 +75,24 @@ function MyComponent() {
 }
 ```
 
+## Track Errors
+
+Report handled errors and crashes with `trackError` (error reporting is in beta):
+
+```js
+import { trackError } from "@aptabase/react-native";
+
+try {
+  await doSomething();
+} catch (error) {
+  trackError(error); // severity "error", kind "handled"
+  // or, for errors the app cannot recover from:
+  trackError(error, { fatal: true }); // severity "fatal", kind "crash"
+}
+```
+
+The `useAptabase` hook also returns `trackError`. Reports include the error type, message, stack trace, severity and kind. With the `enableCrashReporting` init option, uncaught JS errors are reported automatically (`unhandled`, or `crash` when fatal).
+
 ## Configuration
 
 The `init` function accepts an optional `AptabaseOptions` object:
@@ -84,6 +102,8 @@ Aptabase.init("<APP_KEY>", {
   host: "https://your-self-hosted-instance.com", // for self-hosted deployments (A-SH-* keys)
   appVersion: "1.2.3", // override detected app version (useful in Expo Go)
   flushInterval: 30000, // override flush interval in ms (default: 60s prod, 2s dev)
+  enableWeb: true, // enable tracking on React Native Web (disabled by default)
+  enableCrashReporting: true, // report uncaught errors and crashes automatically (disabled by default)
 });
 ```
 
@@ -105,7 +125,10 @@ Aptabase.dispose();
 - Events are flushed when the app goes to background and polling resumes when active
 - In Expo Go, `App Version` is unavailable (native modules not loaded) — use the `appVersion` init option as a workaround
 - The SDK does not track any events automatically — you control what is sent
-- `trackEvent` runs asynchronously in the background — no need to await it
+- `trackEvent` and `trackError` run asynchronously in the background — no need to await them
+- `trackError` reports handled errors and crashes; shown on the Errors page of the dashboard (beta)
+- Error reports are sent immediately and kept in memory for retry while offline; a separate monthly error quota applies
+- Errors caught by React Error Boundaries never reach the crash reporter — call `trackError` from the boundary; native (non-JS) crashes are not captured
 
 ## Cross-Discovery
 

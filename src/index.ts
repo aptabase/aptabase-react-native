@@ -1,6 +1,6 @@
-export type { AptabaseOptions } from "./types";
+export type { AptabaseOptions, TrackErrorOptions } from "./types";
 export { AptabaseProvider, useAptabase } from "./context";
-import { init, trackEvent, dispose } from "./track";
-export { init, trackEvent, dispose };
+import { init, trackEvent, trackError, dispose } from "./track";
+export { init, trackEvent, trackError, dispose };
 
-export default { init, trackEvent, dispose };
+export default { init, trackEvent, trackError, dispose };

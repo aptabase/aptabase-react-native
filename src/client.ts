@@ -1,6 +1,13 @@
-import type { AptabaseOptions } from "./types";
+import type {
+  AptabaseOptions,
+  ErrorKind,
+  ErrorSeverity,
+  TrackErrorOptions,
+} from "./types";
 import type { EnvironmentInfo } from "./env";
 import { NativeEventDispatcher, WebEventDispatcher } from "./dispatcher";
+import { NativeErrorDispatcher, WebErrorDispatcher } from "./error-dispatcher";
+import { buildErrorReport } from "./error-report";
 import { newSessionId } from "./session";
 import { HOSTS, SESSION_TIMEOUT } from "./constants";
 
@@ -8,6 +15,10 @@ export class AptabaseClient {
   private readonly _dispatcher:
     | WebEventDispatcher
     | NativeEventDispatcher
+    | null;
+  private readonly _errorDispatcher:
+    | WebErrorDispatcher
+    | NativeErrorDispatcher
     | null;
   private readonly _env: EnvironmentInfo;
   private _sessionId = newSessionId();
@@ -34,6 +45,11 @@ export class AptabaseClient {
       : null;
 
     this._dispatcher = dispatcher;
+    this._errorDispatcher = shouldEnableTracking
+      ? isWeb
+        ? new WebErrorDispatcher(appKey, baseUrl, env)
+        : new NativeErrorDispatcher(appKey, baseUrl, env)
+      : null;
   }
 
   public trackEvent(
@@ -61,6 +77,35 @@ export class AptabaseClient {
     });
   }
 
+  public trackError(error: unknown, options?: TrackErrorOptions) {
+    const fatal = options?.fatal === true;
+    this.trackErrorInternal(
+      error,
+      fatal ? "fatal" : "error",
+      fatal ? "crash" : "handled"
+    );
+  }
+
+  // Richer entry point used by the crash reporter to convey how the error
+  // was captured ("crash", "unhandled") without widening the public API
+  public trackErrorInternal(
+    error: unknown,
+    severity: ErrorSeverity,
+    kind: ErrorKind
+  ) {
+    if (!this._errorDispatcher) return;
+
+    const report = buildErrorReport(
+      error,
+      severity,
+      kind,
+      this.evalSessionId(),
+      this._env
+    );
+
+    this._errorDispatcher.enqueue(report);
+  }
+
   public startPolling(flushInterval: number) {
     if (!(this._dispatcher instanceof NativeEventDispatcher)) {
       return;
@@ -79,8 +124,10 @@ export class AptabaseClient {
   }
 
   public flush(): Promise<void> {
-    if (!this._dispatcher) return Promise.resolve();
-    return this._dispatcher.flush();
+    return Promise.all([
+      this._dispatcher?.flush(),
+      this._errorDispatcher?.flush(),
+    ]).then(() => undefined);
   }
 
   private evalSessionId() {

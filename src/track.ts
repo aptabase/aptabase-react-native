@@ -1,11 +1,18 @@
-import type { AptabaseOptions } from "./types";
+import type { AptabaseOptions, TrackErrorOptions } from "./types";
 import { getEnvironmentInfo } from "./env";
-import { AppState, Platform } from "react-native";
+import {
+  AppState,
+  Platform,
+  type NativeEventSubscription,
+} from "react-native";
 import { AptabaseClient } from "./client";
+import { registerCrashReporting } from "./crash-reporting";
 import { FLUSH_INTERVAL } from "./constants";
 import { validate } from "./validate";
 
 let _client: AptabaseClient | undefined;
+let _appStateSubscription: NativeEventSubscription | undefined;
+let _unregisterCrashReporting: (() => void) | undefined;
 
 /**
  * Initializes the SDK with given App Key
@@ -19,15 +26,23 @@ export function init(appKey: string, options?: AptabaseOptions) {
     return;
   }
 
+  // init may be called more than once (e.g. from a re-rendered provider),
+  // so tear down whatever a previous call registered
+  removeListeners();
+
   const env = getEnvironmentInfo();
   _client = new AptabaseClient(appKey, env, options);
 
   const flushInterval = options?.flushInterval ?? FLUSH_INTERVAL;
   _client.startPolling(flushInterval);
 
+  if (options?.enableCrashReporting) {
+    _unregisterCrashReporting = registerCrashReporting(_client);
+  }
+
   if (!AppState.isAvailable) return;
 
-  AppState.addEventListener("change", (next) => {
+  _appStateSubscription = AppState.addEventListener("change", (next) => {
     _client?.flush();
 
     if (next === "active") {
@@ -42,12 +57,21 @@ export function init(appKey: string, options?: AptabaseOptions) {
  * Dispose the SDK and stop tracking events
  */
 export function dispose() {
+  removeListeners();
+
   if (_client) {
     _client.stopPolling();
     _client = undefined;
   } else {
     console.warn(`Aptabase: dispose was called but SDK was not initialized.`);
   }
+}
+
+function removeListeners() {
+  _unregisterCrashReporting?.();
+  _unregisterCrashReporting = undefined;
+  _appStateSubscription?.remove();
+  _appStateSubscription = undefined;
 }
 
 /**
@@ -67,6 +91,15 @@ export function trackEvent(
   }
 
   _client?.trackEvent(eventName, props);
+}
+
+/**
+ * Track an error or exception
+ * @param {unknown} error - The error to track, usually an Error instance
+ * @param {TrackErrorOptions} options - Optional parameters, set fatal to true for errors the app cannot recover from
+ */
+export function trackError(error: unknown, options?: TrackErrorOptions) {
+  _client?.trackError(error, options);
 }
 
 const isPlainObject = (val: any) =>

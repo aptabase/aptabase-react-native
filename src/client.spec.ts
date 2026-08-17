@@ -194,4 +194,120 @@ describe("AptabaseClient", () => {
       expect(body[0].systemProps.osVersion).toEqual("13");
     });
   });
+
+  describe("Error tracking", () => {
+    it("should send handled error with correct fields", async () => {
+      const client = new AptabaseClient("A-DEV-000", env);
+
+      client.trackError(new TypeError("boom"));
+      await client.flush();
+
+      expect(fetchMock.requests().length).toEqual(1);
+      const request = fetchMock.requests().at(0);
+      expect(request?.url).toContain("/api/v0/error");
+
+      const body = await request?.json();
+      expect(Array.isArray(body)).toBe(false);
+      expect(body.errorMessage).toEqual("TypeError: boom");
+      expect(body.errorType).toEqual("TypeError");
+      expect(body.severity).toEqual("error");
+      expect(body.kind).toEqual("handled");
+      expect(body.platform).toEqual("React Native");
+      expect(body.osName).toEqual("iOS");
+      expect(body.osVersion).toEqual("14.3");
+      expect(body.sdkVersion).toEqual(env.sdkVersion);
+    });
+
+    it("should send fatal error as crash", async () => {
+      const client = new AptabaseClient("A-DEV-000", env);
+
+      client.trackError(new Error("boom"), { fatal: true });
+      await client.flush();
+
+      const body = await fetchMock.requests().at(0)?.json();
+      expect(body.errorMessage).toEqual("Fatal Error: boom");
+      expect(body.severity).toEqual("fatal");
+      expect(body.kind).toEqual("crash");
+    });
+
+    it("should allow override of appVersion on error reports", async () => {
+      const client = new AptabaseClient("A-DEV-000", env, {
+        appVersion: "2.0.0",
+      });
+
+      client.trackError(new Error("boom"));
+      await client.flush();
+
+      const body = await fetchMock.requests().at(0)?.json();
+      expect(body.appVersion).toEqual("2.0.0");
+    });
+
+    it("should extend the session like events do", async () => {
+      const client = new AptabaseClient("A-DEV-000", env);
+
+      client.trackEvent("Hello1");
+      await client.flush();
+
+      // 50 minutes later, the error touches the session before it expires
+      vi.advanceTimersByTime(50 * 60 * 1000);
+      client.trackError(new Error("boom"));
+      await client.flush();
+
+      // 50 more minutes later, the session is still alive
+      vi.advanceTimersByTime(50 * 60 * 1000);
+      client.trackEvent("Hello2");
+      await client.flush();
+
+      const eventSessionId1 = (await fetchMock.requests().at(0)?.json())[0]
+        .sessionId;
+      const errorSessionId = (await fetchMock.requests().at(1)?.json())
+        .sessionId;
+      const eventSessionId2 = (await fetchMock.requests().at(2)?.json())[0]
+        .sessionId;
+
+      expect(errorSessionId).toEqual(eventSessionId1);
+      expect(eventSessionId2).toEqual(eventSessionId1);
+    });
+
+    it("should retry a failed error report on the next flush", async () => {
+      const client = new AptabaseClient("A-DEV-000", env);
+      fetchMock.mockResponseOnce("{}", { status: 500 });
+
+      client.trackError(new Error("boom"));
+      await client.flush();
+
+      expect(fetchMock.requests().length).toEqual(2);
+      const body = await fetchMock.requests().at(1)?.json();
+      expect(body.errorMessage).toEqual("Error: boom");
+
+      await client.flush();
+      expect(fetchMock.requests().length).toEqual(2);
+    });
+
+    it("should not track errors when web tracking is disabled", async () => {
+      const webEnv: EnvironmentInfo = { ...env, osName: "web", osVersion: "" };
+      const client = new AptabaseClient("A-DEV-000", webEnv);
+
+      client.trackError(new Error("boom"));
+      await client.flush();
+
+      expect(fetchMock.requests().length).toEqual(0);
+    });
+
+    it("should track errors immediately when web tracking is enabled", async () => {
+      const webEnv: EnvironmentInfo = { ...env, osName: "web", osVersion: "" };
+      const client = new AptabaseClient("A-DEV-000", webEnv, {
+        enableWeb: true,
+      });
+
+      client.trackError(new Error("boom"));
+
+      expect(fetchMock.requests().length).toEqual(1);
+      const request = fetchMock.requests().at(0);
+      expect(request?.url).toContain("/api/v0/error");
+
+      const body = await request?.json();
+      expect(body.osName).toEqual("web");
+    });
+  });
 });
