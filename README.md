@@ -99,6 +99,25 @@ A few important notes:
 3. You do not need to await for the `trackEvent` function, it'll run in the background.
 4. Only strings and numbers values are allowed on custom properties
 
+## Debug Mode
+
+Events are flagged as debug based on `__DEV__`, which separates development data from
+production data on your dashboard.
+
+`__DEV__` is false for every release build, including internal ones such as TestFlight or
+an Android internal testing track, so your own pre-release testing counts as production
+data. Pass the `isDebug` option to decide it yourself:
+
+```js
+Aptabase.init("<YOUR_APP_KEY>", {
+  isDebug: __DEV__ || isRunningInternalBuild(),
+});
+```
+
+When omitted, the SDK keeps using `__DEV__`. The flag applies to both events and error
+reports. This mirrors the `isDebug` option in the web SDK and the `trackingMode` option
+in the Swift SDK.
+
 ## Error Reporting
 
 > Error reporting is in beta. Reports appear on the `Errors` page of your Aptabase dashboard.

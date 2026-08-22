@@ -1,3 +1,7 @@
+## Unreleased
+
+- Add the optional `isDebug` init option to override the default `__DEV__` detection, so release builds used for internal testing (e.g. TestFlight) can be reported as debug
+
 ## 0.6.0
 
 - Add error reporting: new `trackError(error, { fatal })` function posting structured error reports (type, message, stack trace, severity, kind) with capture-time enrichment and retry on network failures

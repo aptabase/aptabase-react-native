@@ -17,6 +17,11 @@ export type AptabaseOptions = {
 
   // Automatically report uncaught errors and crashes (disabled by default)
   enableCrashReporting?: boolean;
+
+  // Override whether the app is running in debug mode. Defaults to `__DEV__`,
+  // which is false for any release build, including internal ones such as
+  // TestFlight. Set it to true there to keep those events out of production data.
+  isDebug?: boolean;
 };
 
 /**

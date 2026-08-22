@@ -33,6 +33,9 @@ export class AptabaseClient {
     if (options?.appVersion) {
       this._env.appVersion = options.appVersion;
     }
+    if (typeof options?.isDebug === "boolean") {
+      this._env.isDebug = options.isDebug;
+    }
 
     const isWeb = this._env.osName === "web";
     const isWebTrackingEnabled = isWeb && options?.enableWeb === true;

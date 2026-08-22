@@ -36,6 +36,30 @@ describe("AptabaseClient", () => {
     expect(body[0].systemProps).toEqual({ ...env, appVersion: "2.0.0" });
   });
 
+  it("should allow override of isDebug", async () => {
+    const client = new AptabaseClient("A-DEV-000", env, {
+      isDebug: true,
+    });
+
+    client.trackEvent("Hello");
+    await client.flush();
+
+    const body = await fetchMock.requests().at(0)?.json();
+    expect(body[0].systemProps).toEqual({ ...env, isDebug: true });
+  });
+
+  it("should keep the environment isDebug when not overridden", async () => {
+    const client = new AptabaseClient("A-DEV-000", env, {
+      appVersion: "2.0.0",
+    });
+
+    client.trackEvent("Hello");
+    await client.flush();
+
+    const body = await fetchMock.requests().at(0)?.json();
+    expect(body[0].systemProps.isDebug).toEqual(env.isDebug);
+  });
+
   it("should send event with correct props", async () => {
     const client = new AptabaseClient("A-DEV-000", env);
 
