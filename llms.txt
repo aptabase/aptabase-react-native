@@ -104,6 +104,7 @@ Aptabase.init("<APP_KEY>", {
   flushInterval: 30000, // override flush interval in ms (default: 60s prod, 2s dev)
   enableWeb: true, // enable tracking on React Native Web (disabled by default)
   enableCrashReporting: true, // report uncaught errors and crashes automatically (disabled by default)
+  isDebug: true, // override the default __DEV__ debug detection (e.g. to flag TestFlight builds as debug)
 });
 ```
 
