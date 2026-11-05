@@ -64,16 +64,24 @@ trackEvent("purchase_completed", {
 });
 ```
 
-When using the Context provider, use the `useAptabase` hook:
+When using the Context provider, use the `useAptabase` hook and call `trackEvent` from an event handler:
 
 ```jsx
 import { useAptabase } from "@aptabase/react-native";
+import { Button } from "react-native";
 
-function MyComponent() {
+function SaveButton() {
   const { trackEvent } = useAptabase();
-  trackEvent("screen_viewed", { screen: "home" });
+
+  function handlePress() {
+    trackEvent("settings_saved", { theme: "dark" });
+  }
+
+  return <Button title="Save" onPress={handlePress} />;
 }
 ```
+
+Do NOT call `trackEvent` directly in a component body or inside `useEffect`: components re-render for many reasons (and React Strict Mode double-invokes renders/effects in development), so render-time tracking counts re-renders as user activity. Track user actions from event handlers.
 
 ## Track Errors
 
