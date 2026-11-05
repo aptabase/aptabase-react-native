@@ -81,8 +81,6 @@ function SaveButton() {
 }
 ```
 
-Do NOT call `trackEvent` directly in a component body or inside `useEffect`: components re-render for many reasons (and React Strict Mode double-invokes renders/effects in development), so render-time tracking counts re-renders as user activity. Track user actions from event handlers.
-
 ## Track Errors
 
 Report handled errors and crashes with `trackError` (error reporting is in beta):

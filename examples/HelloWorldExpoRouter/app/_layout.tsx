@@ -23,7 +23,6 @@ export const unstable_settings = {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-// Initialize once at module load, not on every render
 init("A-US-0928558097", { enableCrashReporting: true });
 
 export default function RootLayout() {

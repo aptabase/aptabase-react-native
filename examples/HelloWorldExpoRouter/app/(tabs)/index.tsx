@@ -5,7 +5,6 @@ import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View } from '../../components/Themed';
 
 export default function TabOneScreen() {
-  // Track user actions from event handlers, not from the component body or useEffect
   const sendTestEvent = () => {
     trackEvent('test_event', { source: 'HelloWorldExpoRouter' });
   };

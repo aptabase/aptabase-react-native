@@ -83,7 +83,7 @@ export function Counter() {
 }
 ```
 
-Call `trackEvent` from event handlers like `onPress` (user actions), not directly in a component body or inside `useEffect`. Components re-render for many reasons that have nothing to do with the user, so tracking from render logic would count those re-renders as user activity.
+Call `trackEvent` from event handlers like `onPress`, so each event maps to a user action.
 
 To disable tracking events, you can call the `dispose` function. This will stop and deinitialize the SDK.
 
