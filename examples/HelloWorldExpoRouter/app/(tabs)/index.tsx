@@ -1,10 +1,14 @@
 import { Button, StyleSheet } from 'react-native';
-import { trackError } from '@aptabase/react-native';
+import { trackError, trackEvent } from '@aptabase/react-native';
 
 import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View } from '../../components/Themed';
 
 export default function TabOneScreen() {
+  const sendTestEvent = () => {
+    trackEvent('test_event', { source: 'HelloWorldExpoRouter' });
+  };
+
   const trackHandledError = () => {
     try {
       throw new Error('handled test error from HelloWorldExpoRouter');
@@ -26,6 +30,7 @@ export default function TabOneScreen() {
       <Text style={styles.title}>Tab One</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <EditScreenInfo path="app/(tabs)/index.tsx" />
+      <Button onPress={sendTestEvent} title="Send test event" />
       <Button onPress={trackHandledError} title="Track handled error" />
       <Button onPress={throwUncaughtError} title="Throw uncaught error" />
     </View>

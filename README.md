@@ -62,13 +62,15 @@ export function Counter() {
   const [count, setCount] = useState(0);
 
   const increment = () => {
-    setCount(count + 1);
-    trackEvent("increment", { count });
+    const next = count + 1;
+    setCount(next);
+    trackEvent("increment", { count: next });
   };
 
   const decrement = () => {
-    setCount(count - 1);
-    trackEvent("decrement", { count });
+    const next = count - 1;
+    setCount(next);
+    trackEvent("decrement", { count: next });
   };
 
   return (
@@ -80,6 +82,8 @@ export function Counter() {
   );
 }
 ```
+
+Call `trackEvent` from event handlers like `onPress`, so each event maps to a user action.
 
 To disable tracking events, you can call the `dispose` function. This will stop and deinitialize the SDK.
 
@@ -95,7 +99,7 @@ A few important notes:
 
 1. The SDK will automatically enhance the event with some useful information, like the OS, the app version, and other things.
 2. You're in control of what gets sent to Aptabase. This SDK does not automatically track any events, you need to call `trackEvent` manually.
-   - Because of this, it's generally recommended to at least track an event at startup
+   - Because of this, it's generally recommended to at least track an event at startup (e.g. right after `Aptabase.init`, outside of any component)
 3. You do not need to await for the `trackEvent` function, it'll run in the background.
 4. Only strings and numbers values are allowed on custom properties
 

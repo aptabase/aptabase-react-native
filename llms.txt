@@ -64,14 +64,20 @@ trackEvent("purchase_completed", {
 });
 ```
 
-When using the Context provider, use the `useAptabase` hook:
+When using the Context provider, use the `useAptabase` hook and call `trackEvent` from an event handler:
 
 ```jsx
 import { useAptabase } from "@aptabase/react-native";
+import { Button } from "react-native";
 
-function MyComponent() {
+function SaveButton() {
   const { trackEvent } = useAptabase();
-  trackEvent("screen_viewed", { screen: "home" });
+
+  function handlePress() {
+    trackEvent("settings_saved", { theme: "dark" });
+  }
+
+  return <Button title="Save" onPress={handlePress} />;
 }
 ```
 
